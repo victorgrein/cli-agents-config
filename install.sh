@@ -21,4 +21,4 @@ curl -fsSL "$INSTALLER_URL" -o "$TEMP_INSTALLER" || {
 
 # Make executable and run with terminal access
 chmod +x "$TEMP_INSTALLER"
-exec bash "$TEMP_INSTALLER"
+exec bash "$TEMP_INSTALLER" </dev/tty
