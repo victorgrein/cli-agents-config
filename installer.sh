@@ -136,12 +136,12 @@ select_option() {
         
         echo -e "\n  ${DIM}↑/↓ Navigate  •  Enter Select${NC}"
         
-        # Read single keypress
-        IFS= read -rsn1 key
+        # Read single keypress from terminal
+        IFS= read -rsn1 key </dev/tty
         
         case "$key" in
             $'\x1b')  # Escape sequence
-                read -rsn2 -t 0.1 seq
+                read -rsn2 -t 0.1 seq </dev/tty
                 case "$seq" in
                     '[A') ((selected > 0)) && ((selected--)) ;;
                     '[B') ((selected < count-1)) && ((selected++)) ;;
@@ -187,11 +187,11 @@ multiselect_option() {
         
         echo -e "\n  ${DIM}↑/↓ Navigate  •  Space Toggle  •  Enter Confirm${NC}"
         
-        IFS= read -rsn1 key
+        IFS= read -rsn1 key </dev/tty
         
         case "$key" in
             $'\x1b')
-                read -rsn2 -t 0.1 seq
+                read -rsn2 -t 0.1 seq </dev/tty
                 case "$seq" in
                     '[A') ((cursor > 0)) && ((cursor--)) ;;
                     '[B') ((cursor < count-1)) && ((cursor++)) ;;
@@ -225,7 +225,7 @@ text_input() {
     echo -e "  ${DIM}Press Enter for:${NC} ${CYAN}$default${NC}\n"
     echo -ne "  ${WHITE}Path:${NC} "
     
-    read -r input
+    read -r input </dev/tty
     
     [ -z "$input" ] && echo "$default" || echo "${input/#\~/$HOME}"
 }
@@ -396,7 +396,7 @@ main() {
     
     echo ""
     echo -ne "  ${WHITE}Install now?${NC} ${DIM}[Y/n]${NC} "
-    read -r confirm
+    read -r confirm </dev/tty
     
     [[ "$confirm" =~ ^[Nn]$ ]] && { print_info "Cancelled"; exit 0; }
     
