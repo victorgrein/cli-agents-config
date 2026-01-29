@@ -706,68 +706,47 @@ perform_installation() {
     # Install components
     print_step "Installing components..."
     
-    local all_results=()
-    
     # Install system prompt first
     if [ "$platform" = "claude" ]; then
-        local results=($(install_system_prompt "$platform" "$target_dir"))
-        all_results+=("${results[@]}")
+        install_system_prompt "$platform" "$target_dir" > /dev/null 2>&1
+        print_success "System prompt (CLAUDE.md, settings.json)"
     fi
     
     # Install skills
-    local results=($(install_skills "$platform" "$target_dir"))
-    all_results+=("${results[@]}")
+    install_skills "$platform" "$target_dir" > /dev/null 2>&1
+    print_success "Skills (${#PKG_SKILLS[@]} skills)"
     
-    # Install workflows
-    local results=($(install_workflows "$platform" "$target_dir"))
-    all_results+=("${results[@]}")
+    # Install workflows  
+    install_workflows "$platform" "$target_dir" > /dev/null 2>&1
+    print_success "Workflows (${#PKG_WORKFLOWS[@]} workflows)"
     
     # Install agents
-    local results=($(install_agents "$platform" "$target_dir"))
-    all_results+=("${results[@]}")
+    install_agents "$platform" "$target_dir" > /dev/null 2>&1
+    print_success "Agents (${#PKG_AGENTS[@]} agents)"
     
     # Install commands
-    local results=($(install_commands "$platform" "$target_dir"))
-    all_results+=("${results[@]}")
-    
-    # Print results
-    echo ""
-    print_step "Results"
-    
-    local created=0
-    local skipped=0
-    
-    for result in "${all_results[@]}"; do
-        if [[ "$result" == *"created"* ]]; then
-            ((created++))
-        fi
-        if [[ "$result" == *"skipped"* ]]; then
-            ((skipped++))
-        fi
-    done
-    
-    print_success "Installed: $created files"
-    if [ $skipped -gt 0 ]; then
-        print_info "Skipped: $skipped files"
-    fi
+    install_commands "$platform" "$target_dir" > /dev/null 2>&1
+    print_success "Commands (${#PKG_COMMANDS[@]} commands)"
     
     # Final message
     echo ""
-    print_success "Installation complete!"
+    echo -e "${GREEN}${BOLD}════════════════════════════════════════════════════════════════${NC}"
+    echo -e "${GREEN}${BOLD}  Installation complete!${NC}"
+    echo -e "${GREEN}${BOLD}════════════════════════════════════════════════════════════════${NC}"
     echo ""
-    print_info "Files installed to: $target_dir/$config_dir"
+    print_info "Installed to: $target_dir/$config_dir"
     echo ""
     
     if [ "$platform" = "claude" ]; then
         echo -e "${CYAN}Next steps:${NC}"
-        echo "  1. Start Claude Code in your project"
-        echo "  2. Use /crew create to create your first crew"
-        echo "  3. Or ask Claude to help with CrewAI development"
+        echo "  1. Open Claude Code in your project directory"
+        echo "  2. Run /crew create to build your first crew"
+        echo "  3. Or just ask Claude about CrewAI - it knows everything now"
     else
         echo -e "${CYAN}Next steps:${NC}"
-        echo "  1. Start OpenCode in your project"
-        echo "  2. Use /crew create to create your first crew"
-        echo "  3. The orchestrator will guide you through the process"
+        echo "  1. Open OpenCode in your project directory"
+        echo "  2. Run /crew create to build your first crew"
+        echo "  3. The orchestrator will guide you"
     fi
     
     echo ""
