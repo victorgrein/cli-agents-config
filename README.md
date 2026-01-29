@@ -63,6 +63,11 @@ The interactive installer will ask you:
 
 Navigate with arrow keys, select with Enter. Done in seconds.
 
+**For scripts or CI/CD:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/victorgrein/cli-agents-config/main/install.sh | bash -s -- --platform claude
+```
+
 ---
 
 ## Commands
