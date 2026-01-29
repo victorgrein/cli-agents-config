@@ -1,299 +1,178 @@
-# CrewAI Development Skills
+# CrewAI Development Toolkit
 
-A comprehensive collection of skills, agents, and workflows for CrewAI development, compatible with both **Claude Code** and **OpenCode**.
+### Build AI crews that actually work. Pre-built skills, agents, and workflows for Claude Code & OpenCode.
 
-## Quick Start
+[![Connect with me on LinkedIn](https://img.shields.io/badge/Let's_Connect-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/victorgrein/)
 
-```bash
-# Clone or download this repository
-git clone https://github.com/your-org/crewai-skills.git
-cd crewai-skills
+---
 
-# Run the installer
-python install.py
-```
+## Why I Built This
 
-The installer will guide you through:
-1. Selecting your platform (Claude Code or OpenCode)
-2. Choosing a package (minimal, standard, or full)
-3. Choosing install mode (add or update) if existing installation detected
-4. Installing the selected components
+CrewAI is still new. A framework that's growing fast and changing how we think about AI systems.
 
-## Packages
+I discovered it over a year ago and something just clicked. I've always believed in vertical AI agents. Specialists. Focused. Built to do one thing exceptionally well. CrewAI made that vision real.
 
-| Package | Skills | Agents | Workflows | Commands | Description |
-|---------|--------|--------|-----------|----------|-------------|
-| **minimal** | 3 | 3 | 1 | 1 | Core skills for basic crew creation |
-| **standard** | 15 | 10 | 5 | 8 | Complete CrewAI development toolkit |
-| **full** | 16 | 14 | 5 | 8 | Everything including code agents |
+So I went deep. Really deep.
 
-### Minimal
-- **Skills**: crewai-agents, crewai-tasks, crewai-crews
-- **Agents**: crew-architect, agent-designer, task-designer
-- **Workflows**: create-crew
-- **Commands**: /crew create
+And then something interesting started happening. People began reaching out.
 
-### Standard (Recommended)
-Everything in Minimal, plus:
-- **Skills**: flows, tools, llms, memory, debugging, optimization, migration, and more
-- **Agents**: flow-engineer, tool-specialist, debugger, llm-optimizer, and more
-- **Workflows**: debug-crew, optimize-crew, migrate-project, create-flow
-- **Commands**: Full /crew command suite
+*"How do I build an agent that does X?"*  
+*"Why isn't my flow working?"*  
+*"Can you help me structure this crew?"*
 
-### Full
-Everything in Standard, plus:
-- **Skills**: task-management
-- **Agents**: coder-agent, reviewer, tester, build-agent
+Most of them had already asked an AI for help before coming to me. And the answers they got?
+
+That's what AI gives you without proper skills and a professional workflow. Generic templates that miss the point. Overcomplicated solutions nobody asked for. Code that looks fine but falls apart the moment you run it.
+
+The AI simply didn't understand CrewAI. Not the patterns. Not the pitfalls. Not the way things actually work in practice.
+
+That's why I built this.
+
+A toolkit that gives your AI assistant real knowledge about CrewAI. The skills. The workflows. The proper way to build things.
+
+So when you ask for help, you finally get answers that work.
+
+---
+
+## What's Inside
+
+Everything you need to build crews properly:
+
+- **16 Skills** that teach your AI how CrewAI actually works
+- **10 Specialist Agents** ready to help with specific tasks
+- **8 Commands** for quick actions when you need them
+- **5 Workflows** that guide you step by step
+
+One install. Your AI becomes a CrewAI expert.
+
+---
 
 ## Installation
 
-### Interactive Mode
-```bash
-python install.py
-```
-
-### Command Line Options
+Get started with a single command:
 
 ```bash
-# Basic installation
-python install.py --platform claude --package standard
+# For Claude Code
+curl -fsSL https://raw.githubusercontent.com/victorgrein/cli-agents-config/main/install.sh | bash -s -- --platform claude
 
-# All options
-python install.py [OPTIONS]
-
-Options:
-  -p, --platform {claude,opencode}  Target platform
-  -k, --package {minimal,standard,full}  Package to install
-  -t, --target PATH                 Target directory (default: current)
-  -n, --dry-run                     Preview without making changes
-  -y, --yes                         Skip confirmation prompts
-  -u, --update                      Update mode: overwrite all files
-  --no-backup                       Skip backup creation
+# For OpenCode
+curl -fsSL https://raw.githubusercontent.com/victorgrein/cli-agents-config/main/install.sh | bash -s -- --platform opencode
 ```
 
-### Examples
+Want to install somewhere specific?
 
 ```bash
-# Install for Claude Code
-python install.py --platform claude --package standard
-
-# Install for OpenCode
-python install.py --platform opencode --package full
-
-# Preview installation
-python install.py --dry-run --platform claude --package minimal
-
-# Install to specific directory
-python install.py --target /path/to/project --platform claude
-
-# Non-interactive installation
-python install.py --platform claude --package standard --yes
-
-# Update existing installation (overwrite all)
-python install.py --platform claude --package standard --update --yes
+curl -fsSL https://raw.githubusercontent.com/victorgrein/cli-agents-config/main/install.sh | bash -s -- --platform claude --target ~/my-project
 ```
 
-## Install vs Update Mode
+That's it. You're ready.
 
-When an existing installation is detected (`.claude` or `.opencode` folder exists):
-
-| Mode | Flag | Behavior |
-|------|------|----------|
-| **Add** | (default) | Creates new files, preserves customized files (saves new version as `.new`) |
-| **Update** | `--update` | Overwrites ALL files with latest versions (creates backup first) |
-
-In interactive mode, you'll be prompted to choose:
-```
-Existing claude installation detected (.claude)
-
-Choose action:
-  [1] Add - Add new files, keep customized files
-  [2] Update - Overwrite all files with latest versions
-```
-
-## Platform Differences
-
-| Feature | Claude Code | OpenCode |
-|---------|-------------|----------|
-| Config directory | `.claude/` | `.opencode/` |
-| Orchestrator | `CLAUDE.md` (file) | Built-in agent |
-| Agents location | `.claude/agents/` | `.opencode/agent/subagents/` |
-| Commands location | `.claude/commands/` | `.opencode/command/` |
-| Settings | `settings.json` | N/A |
-
-## Directory Structure
-
-### Repository Structure
-```
-crewai-skills/
-├── templates/
-│   ├── shared/                    # Shared between platforms
-│   │   ├── skills/               # 16 CrewAI skills
-│   │   ├── agents/               # 14 agents (adapted on install)
-│   │   │   ├── crewai/          # CrewAI specialist agents
-│   │   │   └── code/            # Code agents
-│   │   ├── workflows/            # 5 workflow skills
-│   │   └── commands/             # 8 slash commands
-│   │       └── crew/
-│   └── claude/                   # Claude Code specific
-│       ├── CLAUDE.md            # Orchestrator prompt
-│       └── settings.json        # Permissions
-├── install.py                    # Installer script
-├── packages.json                 # Package definitions
-└── README.md
-```
-
-### Installed Structure (Claude Code)
-```
-your-project/
-└── .claude/
-    ├── CLAUDE.md                 # Orchestrator
-    ├── settings.json             # Permissions
-    ├── agents/                   # Specialist agents
-    ├── skills/                   # CrewAI skills + workflows
-    └── commands/
-        └── crew/                 # /crew commands
-```
-
-### Installed Structure (OpenCode)
-```
-your-project/
-└── .opencode/
-    ├── agent/
-    │   └── subagents/           # Specialist agents
-    │       ├── crewai/
-    │       └── code/
-    ├── skills/                   # CrewAI skills + workflows
-    └── command/
-        └── crew/                 # /crew commands
-```
-
-## Skills Reference
-
-### Concept Skills
-| Skill | Description |
-|-------|-------------|
-| `crewai-agents` | Agent creation with roles, goals, backstories |
-| `crewai-tasks` | Task configuration with outputs, context |
-| `crewai-crews` | Crew composition and processes |
-| `crewai-flows` | Flow creation with state management |
-| `crewai-tools` | Custom and built-in tools |
-| `crewai-llms` | LLM configuration and optimization |
-| `crewai-memory` | Memory system configuration |
-| `crewai-processes` | Sequential vs hierarchical processes |
-| `crewai-cli` | CLI commands reference |
-
-### Process Skills
-| Skill | Description |
-|-------|-------------|
-| `crewai-debugging` | Troubleshooting crews and flows |
-| `crewai-optimization` | Cost, latency, quality optimization |
-| `crewai-migration` | Project migration and refactoring |
-| `crewai-crew-creation` | Step-by-step crew creation |
-
-### Standard Skills
-| Skill | Description |
-|-------|-------------|
-| `crewai-code-quality` | Code quality standards |
-| `crewai-project-structure` | Project structure templates |
-
-## Agents Reference
-
-### CrewAI Agents
-| Agent | Description |
-|-------|-------------|
-| `crew-architect` | Crew/flow design and architecture |
-| `agent-designer` | Agent creation and configuration |
-| `task-designer` | Task configuration and outputs |
-| `tool-specialist` | Custom tool creation |
-| `flow-engineer` | Flow code and state management |
-| `debugger` | Error analysis and troubleshooting |
-| `llm-optimizer` | LLM selection and optimization |
-| `migration-specialist` | Project migration |
-| `performance-analyst` | Performance analysis |
-| `crewai-documenter` | Documentation generation |
-
-### Code Agents (Full package)
-| Agent | Description |
-|-------|-------------|
-| `coder-agent` | Code generation |
-| `reviewer` | Code review |
-| `tester` | Test creation |
-| `build-agent` | Build and deployment |
-
-## Slash Commands
-
-| Command | Description |
-|---------|-------------|
-| `/crew create` | Create a new crew |
-| `/crew debug` | Debug crew issues |
-| `/crew optimize` | Optimize performance |
-| `/crew migrate` | Migrate project structure |
-| `/crew review` | Review existing code |
-| `/crew analyze` | Analyze crew architecture |
-| `/crew diagram` | Generate diagrams |
-| `/crew docs` | Generate documentation |
-
-## Contributing
-
-### Adding a New Skill
-
-1. Create directory: `templates/shared/skills/your-skill/`
-2. Add `SKILL.md` with YAML frontmatter
-3. Add `references/` and `templates/` as needed
-4. Update `packages.json`
-
-### Adding a New Agent
-
-1. Create file: `templates/shared/agents/category/agent-name.md`
-2. Use the base format (see existing agents)
-3. Update `packages.json`
-
-### Skill Format
-
-```yaml
----
-name: my-skill
-description: What this skill does
 ---
 
-## Overview
-...
+## Commands
 
-## Quick Reference
-...
-```
+Quick actions when you need them:
 
-### Agent Format
+| Command | What it does |
+|---------|--------------|
+| `/crew create` | Start a new crew from scratch |
+| `/crew analyze` | Understand your crew's architecture |
+| `/crew debug` | Find and fix issues |
+| `/crew diagram` | Generate visual diagrams |
+| `/crew docs` | Create documentation |
+| `/crew migrate` | Move to a better structure |
+| `/crew optimise` | Make it faster and cheaper |
+| `/crew review` | Get feedback on your code |
 
-```yaml
----
-name: my-agent
-description: What this agent does
-tools:
-  - Read
-  - Write
-  - Edit
-skills:
-  - relevant-skill
-model: inherit
+Just type the command. The AI handles the rest.
+
 ---
 
-# Agent Name
+## Agents
 
-<context>
-  ...
-</context>
+Your specialist team. Each one knows their craft:
 
-<role>
-  ...
-</role>
+| Agent | What they do |
+|-------|--------------|
+| **crew-architect** | Designs how your crew fits together |
+| **agent-designer** | Creates agents with proper roles and goals |
+| **task-designer** | Builds tasks that get results |
+| **flow-engineer** | Handles flows and state management |
+| **tool-specialist** | Creates custom tools that work |
+| **debugger** | Finds problems and fixes them |
+| **llm-optimizer** | Picks the right model, saves you money |
+| **migration-specialist** | Moves projects to better patterns |
+| **performance-analyst** | Makes everything run faster |
+| **crewai-documenter** | Writes docs that make sense |
 
-<instructions>
-  ...
-</instructions>
+You don't call them directly. The orchestrator brings in whoever you need.
+
+---
+
+## Skills
+
+Knowledge the AI loads when it needs it:
+
+**Core Concepts**
+- `crewai-agents` - How to build agents properly
+- `crewai-tasks` - Task configuration that works
+- `crewai-crews` - Putting it all together
+- `crewai-flows` - State management and routing
+- `crewai-tools` - Custom and built-in tools
+- `crewai-llms` - Model selection and setup
+- `crewai-memory` - Memory systems
+- `crewai-processes` - Sequential vs hierarchical
+- `crewai-cli` - Command line reference
+
+**Process Skills**
+- `crewai-debugging` - Troubleshooting crews
+- `crewai-optimisation` - Cost and speed improvements
+- `crewai-migration` - Moving to better patterns
+- `crewai-crew-creation` - Step by step guidance
+
+**Standards**
+- `crewai-code-quality` - Writing clean code
+- `crewai-project-structure` - Organising your project
+
+---
+
+## Recommended Workflow
+
+Here's how I use it:
+
+**1. Start with create**
 ```
+/crew create
+```
+The AI walks you through everything. Agent roles. Task structure. The lot.
 
-## License
+**2. Build iteratively**  
+Don't try to do everything at once. Start simple. Add complexity as you need it.
 
-MIT License
+**3. Debug when stuck**
+```
+/crew debug
+```
+Something not working? The debugger agent finds the issue.
+
+**4. Optimise when ready**
+```
+/crew optimise
+```
+Once it works, make it efficient. Better models. Faster execution. Lower costs.
+
+**5. Document before you forget**
+```
+/crew docs
+```
+Future you will thank present you.
+
+---
+
+## Questions?
+
+Connect with me on [LinkedIn](https://www.linkedin.com/in/victorgrein/). Always happy to chat about CrewAI.
+
+---
+
+MIT Licence

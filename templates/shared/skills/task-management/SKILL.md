@@ -160,7 +160,7 @@ Tasks are stored in `.tmp/tasks/` at the project root:
   "context_files": ["docs/auth.md"],
   "acceptance_criteria": ["Login works", "JWT tokens valid"],
   "deliverables": ["auth.ts", "auth.test.ts"],
-  "agent_id": "coder-agent",
+  "agent_id": "crew-architect",
   "started_at": null,
   "completed_at": null,
   "completion_summary": null
