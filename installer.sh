@@ -136,22 +136,21 @@ select_option() {
         
         echo -e "\n  ${DIM}↑/↓ Navigate  •  Enter Select${NC}"
         
-        # Read single keypress from terminal
-        IFS= read -rsn1 key </dev/tty
+        # Read single keypress
+        IFS= read -rsn1 key 2>/dev/null || true
         
-        case "$key" in
-            $'\x1b')  # Escape sequence
-                read -rsn2 -t 0.1 seq </dev/tty
-                case "$seq" in
-                    '[A') ((selected > 0)) && ((selected--)) ;;
-                    '[B') ((selected < count-1)) && ((selected++)) ;;
-                esac
-                ;;
-            '')  # Enter
-                show_cursor
-                return $selected
-                ;;
-        esac
+        if [[ "$key" == $'\x1b' ]]; then
+            # Arrow key - read rest of sequence
+            read -rsn2 -t 0.1 seq 2>/dev/null || true
+            case "$seq" in
+                '[A') ((selected > 0)) && ((selected--)) ;;  # Up
+                '[B') ((selected < count-1)) && ((selected++)) ;;  # Down
+            esac
+        elif [[ "$key" == "" ]]; then
+            # Enter pressed
+            show_cursor
+            return $selected
+        fi
     done
 }
 
@@ -187,30 +186,27 @@ multiselect_option() {
         
         echo -e "\n  ${DIM}↑/↓ Navigate  •  Space Toggle  •  Enter Confirm${NC}"
         
-        IFS= read -rsn1 key </dev/tty
+        IFS= read -rsn1 key 2>/dev/null || true
         
-        case "$key" in
-            $'\x1b')
-                read -rsn2 -t 0.1 seq </dev/tty
-                case "$seq" in
-                    '[A') ((cursor > 0)) && ((cursor--)) ;;
-                    '[B') ((cursor < count-1)) && ((cursor++)) ;;
-                esac
-                ;;
-            ' ')  # Space - toggle
-                [ "${selected[$cursor]}" -eq 1 ] && selected[$cursor]=0 || selected[$cursor]=1
-                ;;
-            '')  # Enter
-                show_cursor
-                # Return space-separated list of selected indices
-                local result=""
-                for i in "${!selected[@]}"; do
-                    [ "${selected[$i]}" -eq 1 ] && result="$result$i "
-                done
-                echo "$result"
-                return
-                ;;
-        esac
+        if [[ "$key" == $'\x1b' ]]; then
+            read -rsn2 -t 0.1 seq 2>/dev/null || true
+            case "$seq" in
+                '[A') ((cursor > 0)) && ((cursor--)) ;;
+                '[B') ((cursor < count-1)) && ((cursor++)) ;;
+            esac
+        elif [[ "$key" == " " ]]; then
+            # Space - toggle
+            [ "${selected[$cursor]}" -eq 1 ] && selected[$cursor]=0 || selected[$cursor]=1
+        elif [[ "$key" == "" ]]; then
+            # Enter
+            show_cursor
+            local result=""
+            for i in "${!selected[@]}"; do
+                [ "${selected[$i]}" -eq 1 ] && result="$result$i "
+            done
+            echo "$result"
+            return
+        fi
     done
 }
 
@@ -225,7 +221,7 @@ text_input() {
     echo -e "  ${DIM}Press Enter for:${NC} ${CYAN}$default${NC}\n"
     echo -ne "  ${WHITE}Path:${NC} "
     
-    read -r input </dev/tty
+    read -r input
     
     [ -z "$input" ] && echo "$default" || echo "${input/#\~/$HOME}"
 }
@@ -396,7 +392,7 @@ main() {
     
     echo ""
     echo -ne "  ${WHITE}Install now?${NC} ${DIM}[Y/n]${NC} "
-    read -r confirm </dev/tty
+    read -r confirm
     
     [[ "$confirm" =~ ^[Nn]$ ]] && { print_info "Cancelled"; exit 0; }
     
