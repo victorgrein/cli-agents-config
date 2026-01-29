@@ -226,24 +226,28 @@ install_commands() {
 }
 
 install_system() {
-    if [ "$PLATFORM" != "claude" ]; then
-        return 0
+    if [ "$PLATFORM" = "claude" ]; then
+        local config_dir="$INSTALL_DIR/.claude"
+        ensure_dir "$config_dir"
+        download_file "$REPO_URL/templates/claude/CLAUDE.md" "$config_dir/CLAUDE.md" || true
+        download_file "$REPO_URL/templates/claude/settings.json" "$config_dir/settings.json" || true
+    else
+        # OpenCode: Install primary orchestrator agent
+        local agents_dir="$INSTALL_DIR/.opencode/agent/core"
+        ensure_dir "$agents_dir"
+        download_file "$REPO_URL/templates/opencode/crewai-orchestrator.md" "$agents_dir/crewai-orchestrator.md" || true
     fi
-    
-    local config_dir="$INSTALL_DIR/.claude"
-    ensure_dir "$config_dir"
-    
-    download_file "$REPO_URL/templates/claude/CLAUDE.md" "$config_dir/CLAUDE.md" || true
-    download_file "$REPO_URL/templates/claude/settings.json" "$config_dir/settings.json" || true
     return 0
 }
 
 perform_installation() {
     print_step "Installing components..."
     
+    install_system
     if [ "$PLATFORM" = "claude" ]; then
-        install_system
-        print_success "System prompt"
+        print_success "System prompt (CLAUDE.md)"
+    else
+        print_success "Orchestrator agent"
     fi
     
     install_skills
@@ -340,7 +344,9 @@ show_confirm_menu() {
     echo "    • Workflows (${#PKG_WORKFLOWS[@]})"
     echo "    • Commands (${#PKG_COMMANDS[@]})"
     if [ "$PLATFORM" = "claude" ]; then
-        echo "    • System prompt"
+        echo "    • System prompt (CLAUDE.md)"
+    else
+        echo "    • Orchestrator agent"
     fi
     echo ""
     
