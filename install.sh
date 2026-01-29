@@ -139,6 +139,42 @@ install_workflows() {
     return 0
 }
 
+transform_agent_for_opencode() {
+    local input_file="$1"
+    local output_file="$2"
+    local agent_id="$3"
+    
+    # Extract content after frontmatter
+    local content=$(sed -n '/^---$/,/^---$/!p' "$input_file" | tail -n +1)
+    
+    # Extract description from original file
+    local desc=$(grep "^description:" "$input_file" | head -1 | sed 's/^description:\s*//' | tr -d '"')
+    
+    # Create OpenCode compatible frontmatter
+    cat > "$output_file" << EOF
+---
+id: $agent_id
+name: ${agent_id}
+description: "$desc"
+category: subagents/crewai
+type: subagent
+version: 1.0.0
+author: crewai-skills
+mode: subagent
+temperature: 0.7
+tools:
+  read: true
+  edit: true
+  write: true
+  grep: true
+  glob: true
+  bash: true
+  task: true
+---
+$content
+EOF
+}
+
 install_agents() {
     local config_dir=$(get_config_dir)
     local agents_dir
@@ -152,14 +188,21 @@ install_agents() {
     for agent_path in "${PKG_AGENTS[@]}"; do
         local agent_name="${agent_path#*/}"
         local dest
+        local temp_file="/tmp/agent_temp_$$.md"
+        
         if [ "$PLATFORM" = "claude" ]; then
             dest="$agents_dir/$agent_name.md"
+            ensure_dir "$(dirname "$dest")"
+            download_file "$REPO_URL/templates/shared/agents/$agent_path.md" "$dest" || true
         else
             dest="$agents_dir/crewai/$agent_name.md"
+            ensure_dir "$(dirname "$dest")"
+            # Download to temp, transform, then save
+            if download_file "$REPO_URL/templates/shared/agents/$agent_path.md" "$temp_file"; then
+                transform_agent_for_opencode "$temp_file" "$dest" "$agent_name"
+                rm -f "$temp_file"
+            fi
         fi
-        
-        ensure_dir "$(dirname "$dest")"
-        download_file "$REPO_URL/templates/shared/agents/$agent_path.md" "$dest" || true
     done
     return 0
 }
