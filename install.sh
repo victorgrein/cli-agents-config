@@ -659,6 +659,9 @@ perform_installation() {
         
         if [ "$force_update" = true ]; then
             print_info "Mode: Update (overwrite existing files)"
+        elif [ ! -t 0 ]; then
+            # Non-interactive: default to add mode
+            print_info "Mode: Add (keep customized files)"
         else
             local install_mode=$(prompt_install_mode "$platform")
             if [ "$install_mode" = "update" ]; then
@@ -682,8 +685,8 @@ perform_installation() {
         print_warning "\nDRY RUN - No changes will be made"
     fi
     
-    # Confirm
-    if [ "$YES" = false ] && [ "$DRY_RUN" = false ]; then
+    # Confirm (skip if non-interactive or --yes flag)
+    if [ "$YES" = false ] && [ "$DRY_RUN" = false ] && [ -t 0 ]; then
         echo ""
         read -p "Proceed with installation? [y/N]: " confirm
         if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
