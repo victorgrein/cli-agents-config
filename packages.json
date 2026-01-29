@@ -1,0 +1,96 @@
+{
+  "packages": {
+    "minimal": {
+      "description": "Core CrewAI skills for basic crew creation",
+      "skills": [
+        "crewai-agents",
+        "crewai-tasks",
+        "crewai-crews"
+      ],
+      "agents": [
+        "crewai/crew-architect",
+        "crewai/agent-designer",
+        "crewai/task-designer"
+      ],
+      "workflows": [
+        "create-crew"
+      ],
+      "commands": [
+        "crew/create"
+      ]
+    },
+    "standard": {
+      "description": "Complete CrewAI development toolkit (recommended)",
+      "extends": "minimal",
+      "skills": [
+        "crewai-flows",
+        "crewai-tools",
+        "crewai-llms",
+        "crewai-memory",
+        "crewai-processes",
+        "crewai-cli",
+        "crewai-debugging",
+        "crewai-optimization",
+        "crewai-migration",
+        "crewai-crew-creation",
+        "crewai-code-quality",
+        "crewai-project-structure"
+      ],
+      "agents": [
+        "crewai/flow-engineer",
+        "crewai/tool-specialist",
+        "crewai/debugger",
+        "crewai/llm-optimizer",
+        "crewai/migration-specialist",
+        "crewai/performance-analyst",
+        "crewai/crewai-documenter"
+      ],
+      "workflows": [
+        "debug-crew",
+        "optimize-crew",
+        "migrate-project",
+        "create-flow"
+      ],
+      "commands": [
+        "crew/analyze",
+        "crew/debug",
+        "crew/diagram",
+        "crew/docs",
+        "crew/migrate",
+        "crew/optimize",
+        "crew/review"
+      ]
+    },
+    "full": {
+      "description": "Everything including code agents and task management",
+      "extends": "standard",
+      "skills": [
+        "task-management"
+      ],
+      "agents": [
+        "code/coder-agent",
+        "code/reviewer",
+        "code/tester",
+        "code/build-agent"
+      ],
+      "workflows": [],
+      "commands": []
+    }
+  },
+  "defaults": {
+    "claude": {
+      "config_dir": ".claude",
+      "skills_dir": "skills",
+      "agents_dir": "agents",
+      "commands_dir": "commands",
+      "system_prompt": "CLAUDE.md"
+    },
+    "opencode": {
+      "config_dir": ".opencode",
+      "skills_dir": "skills",
+      "agents_dir": "agent/subagents",
+      "commands_dir": "command",
+      "system_prompt": "CLAUDE.md"
+    }
+  }
+}

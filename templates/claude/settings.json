@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Write",
+      "Edit",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(tree *)",
+      "Bash(find *)",
+      "Bash(grep *)",
+      "Bash(crewai *)",
+      "Bash(uv *)",
+      "Bash(python *)",
+      "Bash(pip *)",
+      "Glob",
+      "Grep",
+      "Skill"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(sudo *)"
+    ]
+  },
+  "mcpServers": {}
+}
