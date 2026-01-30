@@ -108,35 +108,70 @@ check_interactive_mode() {
 #############################################################################
 
 download_file() {
-    curl -fsSL "$1" -o "$2" 2>/dev/null
+    local url="$1"
+    local dest="$2"
+    local max_retries=3
+    local retry_count=0
+    
+    while [ $retry_count -lt $max_retries ]; do
+        if curl -fsSL "$url" -o "$dest" 2>/dev/null; then
+            # Verify file was actually created and has content
+            if [ -f "$dest" ] && [ -s "$dest" ]; then
+                return 0
+            fi
+        fi
+        retry_count=$((retry_count + 1))
+        sleep 1
+    done
+    
+    return 1
 }
 
 ensure_dir() {
-    mkdir -p "$1" 2>/dev/null || true
+    mkdir -p "$1" || {
+        print_error "Failed to create directory: $1"
+        return 1
+    }
 }
 
 install_skills() {
     local config_dir=$(get_config_dir)
     local skills_dir="$INSTALL_DIR/$config_dir/skills"
+    local installed=0
+    local failed=0
     
     for skill in "${PKG_SKILLS[@]}"; do
         local dest="$skills_dir/$skill/SKILL.md"
         ensure_dir "$(dirname "$dest")"
-        download_file "$REPO_URL/templates/shared/skills/$skill/SKILL.md" "$dest" || true
+        if download_file "$REPO_URL/templates/shared/skills/$skill/SKILL.md" "$dest"; then
+            installed=$((installed + 1))
+        else
+            print_error "Failed to install skill: $skill"
+            failed=$((failed + 1))
+        fi
     done
-    return 0
+    
+    echo "$installed $failed"
 }
 
 install_workflows() {
     local config_dir=$(get_config_dir)
     local skills_dir="$INSTALL_DIR/$config_dir/skills"
+    local installed=0
+    local failed=0
     
     for workflow in "${PKG_WORKFLOWS[@]}"; do
         local dest="$skills_dir/$workflow/SKILL.md"
         ensure_dir "$(dirname "$dest")"
-        download_file "$REPO_URL/templates/shared/workflows/$workflow/SKILL.md" "$dest" || true
+        if download_file "$REPO_URL/templates/shared/workflows/$workflow/SKILL.md" "$dest"; then
+            installed=$((installed + 1))
+        else
+            print_error "Failed to install workflow: $workflow"
+            failed=$((failed + 1))
+        fi
     done
-    return 0
+    
+    echo "$installed $failed"
 }
 
 transform_agent_for_opencode() {
@@ -178,6 +213,8 @@ EOF
 install_agents() {
     local config_dir=$(get_config_dir)
     local agents_dir
+    local installed=0
+    local failed=0
     
     if [ "$PLATFORM" = "claude" ]; then
         agents_dir="$INSTALL_DIR/$config_dir/agents"
@@ -193,18 +230,32 @@ install_agents() {
         if [ "$PLATFORM" = "claude" ]; then
             dest="$agents_dir/$agent_name.md"
             ensure_dir "$(dirname "$dest")"
-            download_file "$REPO_URL/templates/shared/agents/$agent_path.md" "$dest" || true
+            if download_file "$REPO_URL/templates/shared/agents/$agent_path.md" "$dest"; then
+                installed=$((installed + 1))
+            else
+                print_error "Failed to install agent: $agent_name"
+                failed=$((failed + 1))
+            fi
         else
             dest="$agents_dir/crewai/$agent_name.md"
             ensure_dir "$(dirname "$dest")"
             # Download to temp, transform, then save
             if download_file "$REPO_URL/templates/shared/agents/$agent_path.md" "$temp_file"; then
-                transform_agent_for_opencode "$temp_file" "$dest" "$agent_name"
+                if transform_agent_for_opencode "$temp_file" "$dest" "$agent_name"; then
+                    installed=$((installed + 1))
+                else
+                    print_error "Failed to transform agent: $agent_name"
+                    failed=$((failed + 1))
+                fi
                 rm -f "$temp_file"
+            else
+                print_error "Failed to download agent: $agent_name"
+                failed=$((failed + 1))
             fi
         fi
     done
-    return 0
+    
+    echo "$installed $failed"
 }
 
 install_commands() {
